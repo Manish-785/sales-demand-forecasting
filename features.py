@@ -55,36 +55,35 @@ def add_features(df):
     # Ensure Target is Numeric
     df['Weekly_Sales'] = pd.to_numeric(df.get('Weekly_Sales'), errors='coerce')
 
-    # 4. Lag Features
+    # 4. Lag Features (these are safe: they reference past only)
     lag_periods = [1, 2, 3, 7, 14, 28, 52]
     for lag in lag_periods:
         df[f'lag_{lag}'] = df.groupby('Store')['Weekly_Sales'].shift(lag)
 
-    # 5. Rolling Window Statistics
+    # 5. Rolling Window Statistics (use trailing windows excluding current -> shift(1))
     roll_means = [3, 4, 8, 12, 52]
     roll_stds = [3, 4, 8, 52]
     for w in roll_means:
+        # compute trailing mean over previous w observations (exclude current row to avoid leakage)
         df[f'roll_mean_{w}'] = df.groupby('Store')['Weekly_Sales'].transform(
-            lambda x: x.rolling(window=w, min_periods=1).mean()
+            lambda x: x.rolling(window=w, min_periods=1).mean().shift(1)
         )
     for w in roll_stds:
         df[f'roll_std_{w}'] = df.groupby('Store')['Weekly_Sales'].transform(
-            lambda x: x.rolling(window=w, min_periods=1).std()
+            lambda x: x.rolling(window=w, min_periods=1).std().shift(1)
         )
 
-    # 6. EWMA Features
+    # 6. EWMA Features (compute using past data only => shift(1) to exclude current)
     ewm_spans = [3, 7, 14]
     for s in ewm_spans:
         df[f'ewm_span_{s}'] = df.groupby('Store')['Weekly_Sales'].transform(
-            lambda x: x.ewm(span=s, adjust=False).mean()
+            lambda x: x.ewm(span=s, adjust=False, min_periods=1).mean().shift(1)
         )
 
     # 7. Target Transformations
-    # KEEP: Log1p (Safe, helps convergence)
+    # KEEP: Log1p (safe, helps convergence) — do not use current-time transformed target as exogenous
     df['sales_log1p'] = np.log1p(df['Weekly_Sales'].fillna(0))
 
-    # REMOVED: Static store stats, Z-score, and MinMax
-    
     print("Feature Engineering: Complete.")
     return df
 
@@ -98,17 +97,19 @@ def main():
 
     df_processed = add_features(df)
     
-    # Clean NaNs
-    # Exclude Date from numeric cleaning
-    exclude_cols = ['Date']
+    # Clean NaNs — do this per-store to avoid cross-store leakage
+    # Exclude identifiers from numeric cleaning
+    exclude_cols = ['Date', 'Store']
     numeric_cols = [c for c in df_processed.columns if c not in exclude_cols]
-    
-    # Ensure numeric types
+
+    # Ensure numeric types for numeric columns
     df_processed[numeric_cols] = df_processed[numeric_cols].apply(pd.to_numeric, errors='coerce')
-    
-    # Fill NaNs (ffill -> bfill -> 0)
-    df_processed[numeric_cols] = df_processed[numeric_cols].fillna(method='ffill').fillna(method='bfill').fillna(0)
-    
+
+    # Per-store forward/backward fill (keeps fill within each store only), then replace remaining NaNs with 0
+    def per_store_fill(g):
+        return g.fillna(method='ffill').fillna(method='bfill')
+    df_processed[numeric_cols] = df_processed.groupby('Store')[numeric_cols].transform(per_store_fill).fillna(0)
+
     # Final Sort
     df_final = df_processed.sort_values(['Store', 'Date']).reset_index(drop=True)
     

@@ -1,0 +1,5 @@
+model,stores,mean_mape,median_mape,p90_mape,var_mape,ntae
+ARIMA,45,13.4,11.02,24.09,70.86,13.37
+XGBoost,45,5.21,4.38,7.31,9.8,4.99
+LSTM,45,14.02,12.33,21.75,72.39,12.96
+STGNN,45,4.94,4.71,6.98,1.76,

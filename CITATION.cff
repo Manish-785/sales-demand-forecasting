@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this code or results, please cite the accompanying preprint."
+title: "Leveraging Spatial-Temporal Graph Neural Networks for Multi-Store Sales Forecasting"
+authors:
+  - name: "Manish"
+    affiliation: "Indian Institute of Technology Bombay"
+  - given-names: "Arpita"
+    family-names: "Dayama"
+    affiliation: "Indian Institute of Technology Bombay"
+repository-code: "https://github.com/Manish-785/sales-demand-forecasting"
+identifiers:
+  - type: other
+    value: "arXiv:2511.19267"
+    description: "arXiv preprint"
+url: "https://arxiv.org/abs/2511.19267"
+date-released: 2025-11-24
+preferred-citation:
+  type: article
+  title: "Leveraging Spatial-Temporal Graph Neural Networks for Multi-Store Sales Forecasting"
+  authors:
+    - name: "Manish"
+    - given-names: "Arpita"
+      family-names: "Dayama"
+  journal: "arXiv preprint arXiv:2511.19267"
+  year: 2025
+  url: "https://arxiv.org/abs/2511.19267"

@@ -1,0 +1,20 @@
+# Core
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+scikit-learn>=1.3
+
+# Models
+statsmodels>=0.14      # ARIMA baseline
+xgboost>=2.0           # XGBoost baseline
+tensorflow>=2.13       # LSTM baseline
+torch>=2.1             # STGNN
+
+# Graph analysis and visualisation
+networkx>=3.1
+matplotlib>=3.7
+seaborn>=0.12
+plotly>=5.15
+
+# Notebooks
+jupyter

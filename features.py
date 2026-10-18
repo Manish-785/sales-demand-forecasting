@@ -55,7 +55,7 @@ def add_features(df):
     # Ensure Target is Numeric
     df['Weekly_Sales'] = pd.to_numeric(df.get('Weekly_Sales'), errors='coerce')
 
-    # 4. Lag Features (these are safe: they reference past only)
+    # 4. Lag Features
     lag_periods = [1, 2, 3, 7, 14, 28, 52]
     for lag in lag_periods:
         df[f'lag_{lag}'] = df.groupby('Store')['Weekly_Sales'].shift(lag)
@@ -81,7 +81,6 @@ def add_features(df):
         )
 
     # 7. Target Transformations
-    # KEEP: Log1p (safe, helps convergence) — do not use current-time transformed target as exogenous
     df['sales_log1p'] = np.log1p(df['Weekly_Sales'].fillna(0))
 
     print("Feature Engineering: Complete.")

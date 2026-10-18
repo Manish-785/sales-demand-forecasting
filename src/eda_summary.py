@@ -1,11 +1,23 @@
+"""Exploratory summary tables and figures for the engineered dataset.
+
+Writes feature summary statistics, per-store weekly statistics and the
+sales distribution / boxplot / representative-store figures to
+results/figures/.
+
+Usage:
+    python src/eda_summary.py
+"""
 import os
+from pathlib import Path
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 # --- Config ---
-INPUT_PATH = "features.csv"
-OUT_DIR = "figures_and_tables"
+ROOT = Path(__file__).resolve().parents[1]
+INPUT_PATH = ROOT / "data" / "processed" / "features.csv"
+OUT_DIR = ROOT / "results" / "figures"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # --- Load data ---

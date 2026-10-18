@@ -1,12 +1,25 @@
+"""Feature engineering for the Walmart weekly sales dataset.
+
+Reads data/raw/Walmart.csv and writes data/processed/features.csv with
+calendar/holiday indicators, cyclical encodings, per-store lags, rolling
+statistics and EWMA features (all shifted by one week to avoid leakage),
+and a log1p-transformed target.
+
+Usage:
+    python src/features.py
+"""
 import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
 warnings.filterwarnings("ignore")
 
 # --- Configuration ---
-INPUT_FILE = "Walmart.csv"
-OUTPUT_FILE = "features.csv"
+ROOT = Path(__file__).resolve().parents[1]
+INPUT_FILE = ROOT / "data" / "raw" / "Walmart.csv"
+OUTPUT_FILE = ROOT / "data" / "processed" / "features.csv"
 
 def thanksgiving_date(year):
     d = pd.Timestamp(year=year, month=11, day=1)
@@ -106,7 +119,7 @@ def main():
 
     # Per-store forward/backward fill (keeps fill within each store only), then replace remaining NaNs with 0
     def per_store_fill(g):
-        return g.fillna(method='ffill').fillna(method='bfill')
+        return g.ffill().bfill()
     df_processed[numeric_cols] = df_processed.groupby('Store')[numeric_cols].transform(per_store_fill).fillna(0)
 
     # Final Sort
@@ -114,7 +127,7 @@ def main():
     
     print(f"Saving to {OUTPUT_FILE}...")
     df_final.to_csv(OUTPUT_FILE, index=False)
-    print("Success! features.csv created.")
+    print(f"Success! {OUTPUT_FILE.name} created.")
 
 if __name__ == "__main__":
     main()

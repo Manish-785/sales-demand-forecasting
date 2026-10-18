@@ -1,3 +1,13 @@
+"""Store-profile clustering (DBSCAN) visualised with PCA and t-SNE.
+
+Aggregates each store's mean sales and macroeconomic covariates, clusters
+the standardised profiles with DBSCAN and plots 2-D projections.
+
+Usage:
+    python src/store_clustering.py
+"""
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -107,5 +117,5 @@ def generate_visualizations(file_path):
 
 if __name__ == "__main__":
     # Run the function
-    file_path = 'features.csv'
+    file_path = Path(__file__).resolve().parents[1] / "data" / "processed" / "features.csv"
     generate_visualizations(file_path)

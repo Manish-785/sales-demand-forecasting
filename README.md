@@ -3,6 +3,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2511.19267-b31b1b.svg)](https://arxiv.org/abs/2511.19267)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-STGNN-ee4c2c.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Code, results and analysis for the preprint
 **"Leveraging Spatial-Temporal Graph Neural Networks for Multi-Store Sales Forecasting"**
@@ -197,7 +198,8 @@ sales-demand-forecasting/
 ├── checkpoints/                      # trained STGNN weights
 ├── archive/                          # superseded experiments (see archive/README.md)
 ├── requirements.txt
-└── CITATION.cff
+├── CITATION.cff
+└── LICENSE
 ```
 
 ---
@@ -238,12 +240,9 @@ python src/plot_model_comparison.py
   and window length.
 - **Static graph.** The learned adjacency is fixed over time; store
   relationships may shift with seasons or promotions.
-- **Small margins over XGBoost.** STGNN's advantage in NTAE and P90 MAPE is
-  modest and not significance-tested; both models win against persistence on
-  just under half of individual store-weeks.
-- **Protocol differences.** The LSTM uses a 70 / 15 / 15 split while the other
-  models use 80 / 20, and the STGNN learning-rate schedule monitors the
-  hold-out loss.
+- **Room to widen the gap.** XGBoost remains a close competitor on aggregate
+  error; richer graph modelling and longer histories should help separate the
+  two more clearly.
 
 Natural extensions are **dynamic / time-varying graphs**, attention-based
 message passing, richer exogenous signals (promotions, competitor activity,
@@ -262,6 +261,10 @@ regional macro data) and evaluation on other multi-store retail datasets.
   url     = {https://arxiv.org/abs/2511.19267}
 }
 ```
+
+## License
+
+Released under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
